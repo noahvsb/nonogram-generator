@@ -3,18 +3,18 @@
 int main(int argc, char* argv[]) {
     srand(time(NULL)); // set random seed
 
-    int dimension = 5;         // default
-    float fillChance = 0.6f;   // default
+    int dim = 5;             // default
+    float fillChance = 0.6f; // default
 
     if (argc >= 2) {
-        dimension = atoi(argv[1]);
+        dim = atoi(argv[1]);
     }
     if (argc >= 3) {
         fillChance = atof(argv[2]);
     }
 
-    // Invalid inputs
-    if (dimension <= 0) {
+    // validate arguments
+    if (dim <= 0) {
         fprintf(stderr, "Invalid dimension. Must be > 0.\n");
         return 1;
     }
@@ -23,13 +23,19 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    Nonogram* nonogram = createNonogram(dimension, fillChance);
+    Nonogram* nonogram = createNonogram(dim, fillChance);
+    if (nonogram == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
     printDiscord(nonogram);
     freeNonogram(nonogram);
 
     return 0;
 }
 
+// memory allocates a nonogram
+// returns NULL if it failed
 Nonogram* allocNonogram(uint8_t dim, double fillChance) {
     Nonogram* nonogram = malloc(sizeof(Nonogram*));
     if (!nonogram) return NULL;
@@ -54,29 +60,35 @@ Nonogram* allocNonogram(uint8_t dim, double fillChance) {
     return nonogram;
 }
 
+// fill allocated nonogram's raster
 void fillNonogram(Nonogram* nonogram) {
-    double sum = 0;
     for (int i = 0; i < nonogram->dim; i++) {
         for (int j = 0; j < nonogram->dim; j++) {
             double r = (double) rand() / RAND_MAX;
-            sum += r;
             nonogram->raster[i][j] = r <= nonogram->fillChance;
         }
     }
 }
 
+// allocate nonogram and fill it's raster
+// returns NULL if memory allocation failed
 Nonogram* createNonogram(uint8_t dim, double fillChance) {
     Nonogram* nonogram = allocNonogram(dim, fillChance);
-    fillNonogram(nonogram);
+    if (nonogram != NULL) fillNonogram(nonogram);
     return nonogram;
 }
 
+// frees a nonogram pointer safely
 void freeNonogram(Nonogram* nonogram) {
-    for (int i = 0; i < nonogram->dim; i++) {
-        if (nonogram->raster[i]) free(nonogram->raster[i]);
+    if (nonogram) {
+        if (nonogram->raster) {
+            for (int i = 0; i < nonogram->dim; i++) {
+                if (nonogram->raster[i]) free(nonogram->raster[i]);
+            }
+            free(nonogram->raster);
+        }
+        free(nonogram);
     }
-    if (nonogram->raster) free(nonogram->raster);
-    if (nonogram) free(nonogram);
 }
 
 // help function to calculate colNumbers and rowNumbers
@@ -98,6 +110,7 @@ void calculateNumbers(Nonogram* nonogram, int max, bool row, int numbers[][max])
     }
 }
 
+// print a string that can be copy/pasted into Discord to solve the puzzle there
 void printDiscord(Nonogram* nonogram) {
     // print info
     printf("Nonogram (%dx%d)\nchance of white: %f\n\n", nonogram->dim, nonogram->dim, nonogram->fillChance);

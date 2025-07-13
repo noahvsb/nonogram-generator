@@ -16,7 +16,7 @@ typedef struct {
 
 Nonogram* allocNonogram(uint8_t, double);
 void fillNonogram(Nonogram*);
-Nonogram* createNonogram(uint8_t, double); // calls alloc- and fillNonogram
+Nonogram* createNonogram(uint8_t, double);
 
 void freeNonogram(Nonogram*);
 
