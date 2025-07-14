@@ -9,7 +9,7 @@ Doesn't check if the solution is unique yet, but that feature's coming soon.
 
 ### Compile using any C compiler (like gcc)
 examples:
-```sh
+```c
 gcc nonogram.c -o nonogram
 gcc nonogram.c -o nonogram.exe
 gcc nonogram.c -o nonogram.o
@@ -17,18 +17,18 @@ gcc nonogram.c -o nonogram.o
 
 ### Execute
 examples:
-```sh
+```c
 nonogram.exe # windows
 ./nonogram.o # linux
 ```
 
 ### Arguments
-You can pass on 2 optional arguments.
+You can pass on 4 optional arguments:
 
-First argument is the dimension (default = 5)
+```c
+nonogram -d 3 -c 0.5 --fill :thumbs_up: --unfill :thumbs_down:
 
-Second argument is the chance for a square to be white (default = 0.6)
-
-```sh
-nonogram 3 0.5
-```
+-d n | --dim n: dimension of nonogram (default = 5)
+-c p | --chance p: chance of nonogram square being filled (default = 0.6)
+--fill EMOJI: discord emoji of filled square (default = :large_black_square:)
+--unfill EMOJI: discord emoji of unfilled square (default = :large_white_square:)

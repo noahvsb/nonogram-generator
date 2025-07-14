@@ -20,6 +20,6 @@ Nonogram* createNonogram(uint8_t, double);
 
 void freeNonogram(Nonogram*);
 
-void printDiscord(Nonogram*);
+void printDiscord(Nonogram*, const char*, const char*);
 
 #endif

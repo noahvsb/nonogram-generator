@@ -5,30 +5,41 @@ int main(int argc, char* argv[]) {
 
     int dim = 5;             // default
     float fillChance = 0.6f; // default
+    const char* fill = ":black_large_square:";      // default
+    const char* unfill = ":white_large_square:";    // default
 
-    if (argc >= 2) {
-        dim = atoi(argv[1]);
+    for (int i = 1; i < argc; i++) {
+        if ((strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--dim") == 0) && i + 1 < argc) {
+            dim = atoi(argv[++i]);
+        } else if ((strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--chance") == 0) && i + 1 < argc) {
+            fillChance = atof(argv[++i]);
+        } else if (strcmp(argv[i], "--fill") == 0 && i + 1 < argc) {
+            fill = argv[++i];
+        } else if (strcmp(argv[i], "--unfill") == 0 && i + 1 < argc) {
+            unfill = argv[++i];
+        } else {
+            fprintf(stderr, "Syntax error: Usage: %s [-d n | --dim n] [-c p | --chance p] [--fill EMOJI] [--unfill EMOJI]\n", argv[0]);
+            return 1;
+        }
     }
-    if (argc >= 3) {
-        fillChance = atof(argv[2]);
-    }
+
 
     // validate arguments
     if (dim <= 0) {
-        fprintf(stderr, "Invalid dimension. Must be > 0.\n");
+        fprintf(stderr, "Invalid dimension: Must be > 0\n");
         return 1;
     }
     if (fillChance < 0.0f || fillChance > 1.0f) {
-        fprintf(stderr, "Invalid fill chance. Must be between 0.0 and 1.0.\n");
+        fprintf(stderr, "Invalid fill chance: Must be between 0.0 and 1.0\n");
         return 1;
     }
 
     Nonogram* nonogram = createNonogram(dim, fillChance);
     if (nonogram == NULL) {
-        fprintf(stderr, "Memory allocation failed.\n");
+        fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
-    printDiscord(nonogram);
+    printDiscord(nonogram, fill, unfill);
     freeNonogram(nonogram);
 
     return 0;
@@ -116,9 +127,9 @@ void printNumber(int number) {
 }
 
 // print a string that can be copy/pasted into Discord to solve the puzzle there
-void printDiscord(Nonogram* nonogram) {
+void printDiscord(Nonogram* nonogram, const char* fill, const char* unfill) {
     // print info
-    printf("Nonogram (%dx%d)\nchance of white: %f\n\n", nonogram->dim, nonogram->dim, nonogram->fillChance);
+    printf("Nonogram (%dx%d)\nFill chance: %f\n\n", nonogram->dim, nonogram->dim, nonogram->fillChance);
     
     int max = (nonogram->dim + 1) / 2;
 
@@ -142,7 +153,7 @@ void printDiscord(Nonogram* nonogram) {
 
     for (int i = 0; i < nonogram->dim; i++) {
         for (int j = 0; j < nonogram->dim; j++) {
-            printf("||:%s_large_square:||", nonogram->raster[i][j] ? "white" : "black");
+            printf("||%s||", nonogram->raster[i][j] ? fill : unfill);
         }
         // print row numbers
         printf(" `");
