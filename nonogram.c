@@ -110,6 +110,11 @@ void calculateNumbers(Nonogram* nonogram, int max, bool row, int numbers[][max])
     }
 }
 
+void printNumber(int number) {
+    if (!number) printf(" ");
+    else printf("%d", number);
+}
+
 // print a string that can be copy/pasted into Discord to solve the puzzle there
 void printDiscord(Nonogram* nonogram) {
     // print info
@@ -129,7 +134,7 @@ void printDiscord(Nonogram* nonogram) {
     for (int j = max - 1; j >= 0; j--) {
         printf("`");
         for (int i = 0; i < nonogram->dim; i++) {
-            printf("%d", colNumbers[i][j]);
+            printNumber(colNumbers[i][j]);
             if (i != nonogram->dim - 1) printf("  ");
         }
         printf("`\n");
@@ -142,7 +147,7 @@ void printDiscord(Nonogram* nonogram) {
         // print row numbers
         printf(" `");
         for (int j = 0; j < max; j++) {
-            printf("%d", rowNumbers[i][j]);
+            printNumber(rowNumbers[i][j]);
             if (j != max - 1) printf(" ");
         }
         printf("`\n");
